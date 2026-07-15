@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from streamlit_file_browser import st_file_browser
 
-st.title("Selector de ROI con vista previa")
+st.title("Clasificador híbrido de lesiones mamarias")
 
 tab_clasificacion, tab_ayuda = st.tabs(["Clasificación ROI", "Ayuda y documentación"])
 
