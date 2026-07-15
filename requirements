@@ -1,0 +1,16 @@
+streamlit
+numpy
+pandas
+matplotlib
+scikit-image
+opencv-python-headless
+scikit-learn
+torch
+torchvision
+Pillow
+joblib
+scipy
+shap
+streamlit-image-zoom
+streamlit-cropper
+streamlit-file-browser
