@@ -26,7 +26,13 @@ El núcleo del programa son las dos clasificaciones finales: en ambas se clasifi
 - En /models hay un enlace para descargar los modelos utilizados por los códigos del programa.
 - En /notebooks están los notebooks en los que diseñamos los algoritmos y entrenamos los modelos de machine learning.
 
-# Instalación
+# Versión web de la aplicación
+La versión web de esta app está disponible en el enlace 
+
+https://tfm-mamografia-rfdk7lptxogczns97xqh8z.streamlit.app/
+
+# Instalación local
+En el caso de que quieras instalar la aplicación en tu ordenador, sigue estos pasos:
 1. Descarga todos los .py de la carpeta /app en una carpeta de tu ordenador. 
 2. Descarga los modelos del enlace de Drive en la carpeta /models y guárdalos en la misma carpeta donde están los .py.
 3. Asegúrate de tener todas las dependencias que aparecen en requirements.txt instaladas en tu instalación de python. Revisa también las importaciones que aparecen en todos los .py, por si acaso.
