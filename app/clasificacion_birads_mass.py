@@ -7,9 +7,14 @@ def clasificacion_birads_mass(roi):
     from skimage.measure import regionprops
     from skimage.feature import local_binary_pattern
     import joblib
-    import shap
     import gdown
     import os
+#SHAP lo importamos solo si la versión de python es compatible
+    try:
+        import shap
+        SHAP_AVAILABLE = True
+    except Exception:
+        SHAP_AVAILABLE = False
     
     def extract_features(img, mask=None):
         """
@@ -193,12 +198,17 @@ def clasificacion_birads_mass(roi):
     # 5. LBP
     feature_names += [f"lbp_uniform_{i}" for i in range(10)]
 
-    exp = shap.Explanation(
-    values = shap_values,
-    base_values = base_values,
-    feature_names = feature_names
-)
-    
+    if SHAP_AVAILABLE:
+        exp = shap.Explanation(
+        values = shap_values,
+        base_values = base_values,
+        feature_names = feature_names
+    )
+    else:
+        exp = None
+
+   
     return probs, exp
+
 
     
