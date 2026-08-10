@@ -203,7 +203,6 @@ def clasificacion_MASSvsCALC(roi):
     )
     else:
         exp = None
-        print('SHAP no disponible en este entorno.')
     
 
     return probs, exp
