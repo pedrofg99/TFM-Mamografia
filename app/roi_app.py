@@ -177,7 +177,7 @@ with tab_clasificacion:
         if overlay.shape[-1] == 1:
             overlay = np.repeat(overlay, 3, axis=-1)
         
-        st.image(overlay, caption="Grad-CAM", use_column_width=True)
+        st.image(overlay, caption="Grad-CAM", use_container_width=True)
 
         
         st.info('Nota: Haya o no haya una lesión en la imagen proporcionada, el algoritmo de clasificación dará unos porcentajes. Eso no confirma que existan lesiones.')
