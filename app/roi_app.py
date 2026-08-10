@@ -10,11 +10,16 @@ from PIL import Image
 from clasificacion_MASSvsCALC import clasificacion_MASSvsCALC
 from clasificacion_birads_mass import clasificacion_birads_mass
 from clasificacion_birads_micro import clasificacion_birads_micro
-import shap
 import matplotlib.pyplot as plt
 import numpy as np
 from streamlit_file_browser import st_file_browser
-
+#SHAP solo lo importamos si es compatible con la versión de python
+try:
+    import shap
+    SHAP_AVAILABLE = True
+except Exception:
+    SHAP_AVAILABLE = False
+    
 st.title("Clasificador híbrido de lesiones mamarias")
 
 tab_clasificacion, tab_ayuda = st.tabs(["Clasificación ROI", "Ayuda y documentación"])
@@ -113,9 +118,12 @@ with tab_clasificacion:
 
         st.subheader("Importancia de las características (SHAP)")
         
-        fig, ax = plt.subplots()
-        shap.plots.bar(exp, ax=ax)
-        st.pyplot(fig)
+        if SHAP_AVAILABLE:
+            fig, ax = plt.subplots()
+            shap.plots.bar(exp, ax=ax)
+            st.pyplot(fig)
+        else:
+            st.error('El gráfico de importancias SHAP no está disponible en este entorno debido a incompatibilidades con la versión de Python')
 
         st.info('Las barras azules, de valores negativos, simbolizan que esas variables han fomentado que la decisión se incline hacia ser masa. Las barras rojas, de valores positivos, indican lo contrario.')
         st.info('Nota: haya o no haya una lesión en la región de interés proporcionada, el algoritmo de clasificación dará unos porcentajes. Eso no confirma que exista una lesión')
@@ -134,9 +142,12 @@ with tab_clasificacion:
 
         st.subheader("Importancia de las características (SHAP)")
         
-        fig, ax = plt.subplots()
-        shap.plots.bar(exp2, ax=ax)
-        st.pyplot(fig)
+        if SHAP_AVAILABLE:
+            fig, ax = plt.subplots()
+            shap.plots.bar(exp2, ax=ax)
+            st.pyplot(fig)
+        else:
+            st.error('El gráfico de importancias SHAP no está disponible en este entorno debido a incompatibilidades con la versión de Python')
 
        
         st.info('Nota: haya o no haya una lesión en la región de interés proporcionada, el algoritmo de clasificación dará unos porcentajes. Eso no confirma que exista una lesión')
@@ -176,8 +187,6 @@ with tab_ayuda:
     st.write('El núcleo del programa son las dos clasificaciones finales: en ambas se clasifican las lesiones según su grado de malignidad, como BENIGNAS o MALIGNAS. BENIGNAS corresponden a aquellas con un bi-rads de INbreast menor que 4, y las MALIGNAS corresponden a un bi-rads mayor o igual a 4. En la selectbox "¿Quieres clasificar esta imagen como masa o como microcalcificación?" se puede seleccionar una de las dos opciones. La clasificación para masas usa el mismo algoritmo que la clasificación preliminar descrita antes. La clasificación para microcalcificaciones, en cambio, usa una red neuronal ResNet50, entrenada con una base de datos distinta: CBIS-DDSM. Esto se hizo por la gran complejidad que presentan estas lesiones, y por el hecho del gran desbalance de clases que había en INbreast, habiendo muchas más malignas que benignas.')
 
     st.subheader('Para más información o para ver el código, consulta el GITHUB del proyecto')
-
-
 
 
 
