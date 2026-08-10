@@ -8,6 +8,8 @@ def clasificacion_birads_mass(roi):
     from skimage.feature import local_binary_pattern
     import joblib
     import shap
+    import gdown
+    import os
     
     def extract_features(img, mask=None):
         """
@@ -141,8 +143,19 @@ def clasificacion_birads_mass(roi):
     #Ahora extraemos sus features:
     X = extract_features(roi_pre)
     X = X.reshape(1, -1)
+    
     #Y ahora aplicamos el modelo, importándolo
-    svm = joblib.load("modelo_birads_mass.pkl")
+    nombre_modelo = 'modelo_birads_mass.pkl'
+    drive_id_modelo = '15g7Sz-LVBXi--aa8oVi0dl1y_kmmpeMc'
+    url = f"https://drive.google.com/uc?export=download&id={drive_id_modelo}"
+
+    if not os.path.exists(nombre_modelo):
+        gdown.download(url, nombre_modelo, quiet = False)
+
+    # Cargar el modelo
+    svm = joblib.load(nombre_modelo)
+
+
     probs = svm.predict_proba(X) #Te da un array con la prob de cada clase
 
     #Ahora mostramos el análisis SVM
