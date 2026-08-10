@@ -9,6 +9,7 @@ def clasificacion_MASSvsCALC(roi):
     import joblib
     import shap
     import numpy as np
+    import os
     
     def extract_features(img, mask=None):
         """
@@ -142,8 +143,17 @@ def clasificacion_MASSvsCALC(roi):
     #Ahora extraemos sus features:
     X = extract_features(roi_pre)
     X = X.reshape(1, -1)
+    
     #Y ahora aplicamos el modelo, importándolo
-    svm = joblib.load("modelo_MASSvsCALC.pkl")
+    nombre_modelo = "modelo_MASSvsCALC.pkl"
+    drive_id_modelo = '1iyb_W2G7OkXKHAQI-KbMfcJ4WktZaMuh'
+    url = f"https://drive.google.com/uc?export=download&id={drive_id_modelo}"
+
+    #Si el modelo no está en la misma carpeta que la función, lo descarga de google drive
+    if not os.path.exists(nombre_modelo):
+        gdown.download(url, nombre_modelo, quiet = False)
+
+    svm = joblib.load(nombre_modelo)
     probs = svm.predict_proba(X) #Te da un array con la prob de cada clase
 
     #Calculamos SHAP VALUES
