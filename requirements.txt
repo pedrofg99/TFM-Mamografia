@@ -10,7 +10,6 @@ torchvision
 Pillow
 joblib
 scipy
-shap
 streamlit-image-zoom
 streamlit-cropper
 streamlit-file-browser
