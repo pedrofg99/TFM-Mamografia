@@ -9,6 +9,7 @@ def clasificacion_MASSvsCALC(roi):
     import joblib
     import numpy as np
     import os
+    import gdown
 #SHAP solo lo importamos si la versión de python es compatible
     try:
         import shap
