@@ -26,6 +26,8 @@ tab_clasificacion, tab_ayuda = st.tabs(["Clasificación ROI", "Ayuda y documenta
 
 with tab_clasificacion:
 
+    st.write("Working directory:", os.getcwd())
+
     st.subheader("Selecciona cómo cargar la imagen")
     
     modo = st.radio(
