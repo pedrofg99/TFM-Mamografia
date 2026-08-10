@@ -167,7 +167,7 @@ def clasificacion_MASSvsCALC(roi):
     #Calculamos SHAP VALUES
     if SHAP_AVAILABLE:
         # Cargar background generado en el entrenamiento
-        X_train_background = np.load("background_massvscalc.npy")
+        X_train_background = np.load(os.path.join("app", "background_massvscalc.npy"))
         background = shap.kmeans(X_train_background, 10)
         # Crear explainer (solo una vez)
         explainer = shap.KernelExplainer(svm.predict, background)
