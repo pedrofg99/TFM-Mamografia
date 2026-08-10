@@ -52,6 +52,8 @@ def clasificacion_MASSvsCALC(roi):
         # -----------------------------
         # 2. HISTOGRAMA (32 bins)
         # -----------------------------
+        vals = np.nan_to_num(vals, nan=0.0)
+        vals = np.clip(vals, 0, 255).astype(np.uint8)
         hist, _ = np.histogram(vals, bins=32, range=(0, 255), density=True)
         feats.extend(hist.tolist())
     
