@@ -21,27 +21,41 @@ tab_clasificacion, tab_ayuda = st.tabs(["Clasificación ROI", "Ayuda y documenta
 
 with tab_clasificacion:
 
-    carpeta = r"C:\Users\pedro\Documents\MÁSTER UNIR 💻\TFM\extracción de imágenes del dataset\Imagenes png INbreast RENOMBRADAS"
-    carpeta = st.text_input("Introduce la ruta de la carpeta de imágenes:")
-
+    st.subheader("Selecciona cómo cargar la imagen")
     
-    if not carpeta:
-        st.stop()
+    modo = st.radio(
+        "Método de carga:",
+        ["Elegir carpeta local (solo si la aplicación está instalada en local)", "Subir imagen manualmente"]
+    )
 
-    if not os.path.isdir(carpeta):
-        st.error("❌ La ruta no existe. Revisa que esté bien escrita.")
-        st.stop()
+    if modo == 'Subir imagen manualmente':
+        img_file = st.file_uploader('Sube una imagen')
+        if img_file is None:
+            st.info('Sube una imagen para continuar.')
+            st.stop()
+        img = Image.open(img_file).convert('RGB')
+        img_np = np.array(img)
+
+    else:
+        carpeta = st.text_input("Introduce la ruta de la carpeta de imágenes:")
+        
+        if not carpeta:
+            st.stop()
     
-   
-    st.success("Carpeta válida ✔")
-            
-    files = os.listdir(carpeta)
+        if not os.path.isdir(carpeta):
+            st.error("❌ La ruta no existe. Revisa que esté bien escrita.")
+            st.stop()
+        
        
-    fname = st.selectbox("Selecciona una imagen", files)
-    file_path = os.path.join(carpeta, fname)
-    img = Image.open(file_path).convert("RGB")
-    img_np = np.array(img)
-    h_img, w_img = img_np.shape[:2]
+        st.success("Carpeta válida ✔")
+                
+        files = os.listdir(carpeta)
+           
+        fname = st.selectbox("Selecciona una imagen", files)
+        file_path = os.path.join(carpeta, fname)
+        img = Image.open(file_path).convert("RGB")
+        img_np = np.array(img)
+        h_img, w_img = img_np.shape[:2]
     
     # Convertir la imagen NumPy a PIL
     img_pil = Image.fromarray(img_np)
@@ -130,8 +144,8 @@ with tab_clasificacion:
     elif tipo_clasificacion == "Microcalcificación":
         pred, probs2, overlay = clasificacion_birads_micro(img)
         p0, p1 = probs2[0]
-        st.write(f"Probabilidad benigno: {(p0*100):.0f}%")
-        st.write(f"Probabilidad maligno: {(p1*100):.0f}%")
+        st.subheader(f"Probabilidad benigno: {(p0*100):.0f}%")
+        st.subheader(f"Probabilidad maligno: {(p1*100):.0f}%")
 
         st.subheader('Mapa de activación (GRAD_CAM)')
         st.image(overlay, caption="Grad-CAM", use_column_width=True)
@@ -162,6 +176,7 @@ with tab_ayuda:
     st.write('El núcleo del programa son las dos clasificaciones finales: en ambas se clasifican las lesiones según su grado de malignidad, como BENIGNAS o MALIGNAS. BENIGNAS corresponden a aquellas con un bi-rads de INbreast menor que 4, y las MALIGNAS corresponden a un bi-rads mayor o igual a 4. En la selectbox "¿Quieres clasificar esta imagen como masa o como microcalcificación?" se puede seleccionar una de las dos opciones. La clasificación para masas usa el mismo algoritmo que la clasificación preliminar descrita antes. La clasificación para microcalcificaciones, en cambio, usa una red neuronal ResNet50, entrenada con una base de datos distinta: CBIS-DDSM. Esto se hizo por la gran complejidad que presentan estas lesiones, y por el hecho del gran desbalance de clases que había en INbreast, habiendo muchas más malignas que benignas.')
 
     st.subheader('Para más información o para ver el código, consulta el GITHUB del proyecto')
+
 
 
 
