@@ -161,6 +161,22 @@ with tab_clasificacion:
         st.subheader(f"Probabilidad maligno: {(p1*100):.0f}%")
 
         st.subheader('Mapa de activación (GRAD_CAM)')
+        #Transformamos overlay para evitar errores
+        overlay = np.array(overlay)
+        # Si viene en formato CHW (3, H, W), lo pasamos a HWC
+        if overlay.ndim == 3 and overlay.shape[0] == 3:
+            overlay = np.transpose(overlay, (1, 2, 0))
+
+        # Normalizar si está en float
+        if overlay.dtype != np.uint8:
+            overlay = overlay - np.min(overlay)
+            overlay = overlay / (np.max(overlay) + 1e-8)
+            overlay = (overlay * 255).astype(np.uint8)
+
+        # Asegurar que es RGB
+        if overlay.shape[-1] == 1:
+            overlay = np.repeat(overlay, 3, axis=-1)
+        
         st.image(overlay, caption="Grad-CAM", use_column_width=True)
 
         
