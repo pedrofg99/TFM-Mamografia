@@ -4,7 +4,6 @@ pandas
 matplotlib
 scikit-image
 opencv-python-headless==4.7.0.72
-cv2
 scikit-learn
 torch
 torchvision
