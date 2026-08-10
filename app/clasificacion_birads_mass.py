@@ -169,7 +169,7 @@ def clasificacion_birads_mass(roi):
         #Calculamos SHAP VALUES
     if SHAP_AVAILABLE:
         # Cargar background generado en el entrenamiento
-        X_train_background = np.load("background_clasifmass.npy")
+        X_train_background = np.load(os.path.join("app", "background_clasifmass.npy"))
         background = shap.kmeans(X_train_background, 10)
         # Crear explainer (solo una vez)
         explainer = shap.KernelExplainer(svm.predict, background)
