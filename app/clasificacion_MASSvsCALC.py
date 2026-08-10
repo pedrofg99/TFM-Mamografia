@@ -7,9 +7,14 @@ def clasificacion_MASSvsCALC(roi):
     from skimage.measure import regionprops
     from skimage.feature import local_binary_pattern
     import joblib
-    import shap
     import numpy as np
     import os
+#SHAP solo lo importamos si la versión de python es compatible
+    try:
+        import shap
+        SHAP_AVAILABLE = True
+    except Exception:
+        SHAP_AVAILABLE = False
     
     def extract_features(img, mask=None):
         """
@@ -143,7 +148,6 @@ def clasificacion_MASSvsCALC(roi):
     #Ahora extraemos sus features:
     X = extract_features(roi_pre)
     X = X.reshape(1, -1)
-    
     #Y ahora aplicamos el modelo, importándolo
     nombre_modelo = "modelo_MASSvsCALC.pkl"
     drive_id_modelo = '1iyb_W2G7OkXKHAQI-KbMfcJ4WktZaMuh'
@@ -153,6 +157,7 @@ def clasificacion_MASSvsCALC(roi):
     if not os.path.exists(nombre_modelo):
         gdown.download(url, nombre_modelo, quiet = False)
 
+    
     svm = joblib.load(nombre_modelo)
     probs = svm.predict_proba(X) #Te da un array con la prob de cada clase
 
@@ -190,13 +195,18 @@ def clasificacion_MASSvsCALC(roi):
     # 5. LBP
     feature_names += [f"lbp_uniform_{i}" for i in range(10)]
 
-    exp = shap.Explanation(
-    values = shap_values,
-    base_values = base_values,
-    feature_names = feature_names
-)
+    if SHAP_AVAILABLE:
+        exp = shap.Explanation(
+        values = shap_values,
+        base_values = base_values,
+        feature_names = feature_names
+    )
+    else:
+        exp = None
+        print('SHAP no disponible en este entorno.')
     
 
     return probs, exp
+
 
     
