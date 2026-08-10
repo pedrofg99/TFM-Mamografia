@@ -203,7 +203,7 @@ def clasificacion_MASSvsCALC(roi):
         exp = shap.Explanation(
         values = shap_values,
         base_values = base_values,
-        Feature_names = feature_names
+        feature_names = feature_names
     )
     else:
         exp = None
