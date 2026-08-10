@@ -6,6 +6,7 @@ import numpy as np
 from torchvision import transforms
 from PIL import Image
 import cv2
+import os
 
 def clasificacion_birads_micro(img):
 
@@ -14,10 +15,18 @@ def clasificacion_birads_micro(img):
     # -----------------------------
     # 1. Cargar modelo
     # -----------------------------
+    #Primero descargamos los pesos si no estuvieran ya descargados
+    nombre_pesos = 'final_model_weights_2.pth'
+    drive_id_pesos = '1_hcUPYki2SMlKv6IUzEk5ul_WPE6B56z'
+    url = f"https://drive.google.com/uc?export=download&id={drive_id_pesos}"
+    if not os.path.exists(nombre_pesos):
+        gdown.download(url, nombre_pesos, quiet = False)
+
+         
     new_model = models.resnet50(weights="IMAGENET1K_V2")
     new_model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
     new_model.fc = nn.Linear(new_model.fc.in_features, 2)
-    state_dict = torch.load('final_model_weights_2.pth', map_location=torch.device('cpu'))
+    state_dict = torch.load(nombre_pesos, map_location=torch.device('cpu'))
     new_model.load_state_dict(state_dict)
     new_model = new_model.to(device)
     new_model.eval() 
