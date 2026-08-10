@@ -167,45 +167,45 @@ def clasificacion_birads_mass(roi):
 
     #Ahora mostramos el análisis SVM
         #Calculamos SHAP VALUES
-    # Cargar background generado en el entrenamiento
-    X_train_background = np.load("background_clasifmass.npy")
-    background = shap.kmeans(X_train_background, 10)
-    # Crear explainer (solo una vez)
-    explainer = shap.KernelExplainer(svm.predict, background)
-    # Calcular SHAP para esta ROI
-    
-    shap_values = explainer.shap_values(X)[0] 
-
-    # base_values debe ser array de 1 elemento
-    base_values = np.array([explainer.expected_value])             # (1,)
-    
-    # data debe ser 2D: (1, n_features)
-    data = X.reshape(1, -1)                                    # (1, n_features)
-    #Creamos los nombres de las features:
-    #Creamos un array con los nombres de las features:
-    feature_names = []
-    
-    # 1. Intensidad global
-    feature_names += ["mean", "std", "skew", "kurtosis", "p10", "p50", "p90"]
-    
-    # 2. Histograma (32 bins)
-    feature_names += [f"hist_bin_{i}" for i in range(32)]
-    
-    # 3. GLCM
-    feature_names += ["glcm_contrast", "glcm_homogeneity", "glcm_energy", "glcm_correlation"]
-    
-    # 4. Gradientes
-    feature_names += ["grad_mag_mean", "grad_mag_std", "lap_mean", "lap_std"]
-    
-    # 5. LBP
-    feature_names += [f"lbp_uniform_{i}" for i in range(10)]
-
     if SHAP_AVAILABLE:
+        # Cargar background generado en el entrenamiento
+        X_train_background = np.load("background_clasifmass.npy")
+        background = shap.kmeans(X_train_background, 10)
+        # Crear explainer (solo una vez)
+        explainer = shap.KernelExplainer(svm.predict, background)
+        # Calcular SHAP para esta ROI
+        
+        shap_values = explainer.shap_values(X)[0] 
+    
+        # base_values debe ser array de 1 elemento
+        base_values = np.array([explainer.expected_value])             # (1,)
+        
+        # data debe ser 2D: (1, n_features)
+        data = X.reshape(1, -1)                                    # (1, n_features)
+        #Creamos los nombres de las features:
+        #Creamos un array con los nombres de las features:
+        feature_names = []
+        
+        # 1. Intensidad global
+        feature_names += ["mean", "std", "skew", "kurtosis", "p10", "p50", "p90"]
+        
+        # 2. Histograma (32 bins)
+        feature_names += [f"hist_bin_{i}" for i in range(32)]
+        
+        # 3. GLCM
+        feature_names += ["glcm_contrast", "glcm_homogeneity", "glcm_energy", "glcm_correlation"]
+        
+        # 4. Gradientes
+        feature_names += ["grad_mag_mean", "grad_mag_std", "lap_mean", "lap_std"]
+        
+        # 5. LBP
+        feature_names += [f"lbp_uniform_{i}" for i in range(10)]
+    
         exp = shap.Explanation(
-        values = shap_values,
-        base_values = base_values,
-        feature_names = feature_names
-    )
+            values = shap_values,
+            base_values = base_values,
+            feature_names = feature_names
+        )
     else:
         exp = None
 
