@@ -10,6 +10,7 @@ from PIL import Image
 from clasificacion_MASSvsCALC import clasificacion_MASSvsCALC
 from clasificacion_birads_mass import clasificacion_birads_mass
 from clasificacion_birads_micro import clasificacion_birads_micro
+from segmentacion_UNET import segmentacion_unet
 import matplotlib.pyplot as plt
 import numpy as np
 from streamlit_file_browser import st_file_browser
@@ -81,7 +82,7 @@ with tab_clasificacion:
     
     usar_ml = st.selectbox(
         "¿Quieres ayudarte de una segmentación?",
-        ("No", "Usar segmentación mediante clústering", 'Usar segmentación mediante red neuronal U-net (no disponible)')
+        ("No", "Usar segmentación mediante clústering", 'Usar segmentación mediante red neuronal U-Net')
     )
     #Posible ayuda de segmentación ML (o no):
     if usar_ml == 'Usar segmentación mediante clústering':
@@ -100,7 +101,24 @@ with tab_clasificacion:
         image_zoom(preview, mode="scroll", size = (700,800), keep_aspect_ratio=False, zoom_factor=4.0, increment=0.2)
 
         st.info('Nota: Esta segmentación puede equivocarse. La elección final de región de interés debe basarse exclusivamente en tu criterio')
+
+    elif usar_ml == 'Usar segmentación mediante red neuronal U-Net':
+        mask, _ = segmentacion_unet(img_pil)
+        mask = np.array(mask)
+        mask = mask.astype(np.uint8)
+
+        # Si viene en 0–1, escálala
+        if np.max(mask) <= 1:
+            mask = (mask * 255).astype(np.uint8)
+        
+        mask_color = np.zeros_like(img_np)
+        mask_color[:,:,1] = mask # canal verde
+        overlay = cv2.addWeighted(img_np, 0.9, mask_color, 0.1, 0)
+        preview = overlay.copy()
     
+        image_zoom(preview, mode="scroll", size = (700,800), keep_aspect_ratio=False, zoom_factor=4.0, increment=0.2)
+
+        st.info('Nota: Esta segmentación puede equivocarse. La elección final de región de interés debe basarse exclusivamente en tu criterio')
     
     # ============================
     # BOTÓN: SOLO CALCULA MASSvsCALC UNA VEZ
@@ -128,7 +146,7 @@ with tab_clasificacion:
             st.error('El gráfico de importancias SHAP no está disponible en este entorno debido a incompatibilidades con la versión de Python')
 
         st.info('Las barras azules, de valores negativos, simbolizan que esas variables han fomentado que la decisión se incline hacia ser masa. Las barras rojas, de valores positivos, indican lo contrario.')
-        st.info('Nota: haya o no haya una lesión en la región de interés proporcionada, el algoritmo de clasificación dará unos porcentajes. Eso no confirma que exista una lesión')
+        st.info('Nota: Haya o no haya realmente una lesión en la región de interés proporcionada, el algoritmo de clasificación dará unos porcentajes. Eso no confirma que exista una lesión.')
     
     
     tipo_clasificacion = st.selectbox(
@@ -152,7 +170,7 @@ with tab_clasificacion:
             st.error('El gráfico de importancias SHAP no está disponible en este entorno debido a incompatibilidades con la versión de Python')
 
        
-        st.info('Nota: haya o no haya una lesión en la región de interés proporcionada, el algoritmo de clasificación dará unos porcentajes. Eso no confirma que exista una lesión')
+        st.info('Nota: Haya o no haya realmente una lesión en la región de interés proporcionada, el algoritmo de clasificación dará unos porcentajes. Eso no confirma que exista una lesión.')
     
     elif tipo_clasificacion == "Microcalcificación":
         pred, probs2, overlay = clasificacion_birads_micro(img)
@@ -180,7 +198,7 @@ with tab_clasificacion:
         st.image(overlay, caption="Grad-CAM", use_container_width=True)
 
         
-        st.info('Nota: Haya o no haya una lesión en la imagen proporcionada, el algoritmo de clasificación dará unos porcentajes. Eso no confirma que existan lesiones.')
+        st.info('Nota: Haya o no haya realmente una lesión en la imagen proporcionada, el algoritmo de clasificación dará unos porcentajes. Eso no confirma que existan lesiones.')
 
 with tab_ayuda:
     
